@@ -213,7 +213,11 @@
             succeedBlock(URL,error);
         }];
     }else{
-        succeedBlock([NSURL URLWithString:URLString],nil);
+        if([[NSFileManager defaultManager] fileExistsAtPath:URLString]){
+            succeedBlock([NSURL fileURLWithPath:URLString], nil);
+        } else {
+            succeedBlock([NSURL URLWithString:URLString],nil);
+        }
     }
     
     
