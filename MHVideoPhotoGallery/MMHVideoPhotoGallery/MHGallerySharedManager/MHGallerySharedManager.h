@@ -51,7 +51,7 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
 };
 
 
-@interface MHGallerySharedManager : NSObject
+@interface MHGallerySharedManager : NSObject<UIAlertViewDelegate>
 
 /**
  *  default is MHYoutubeThumbQualityHQ
@@ -78,6 +78,9 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
  */
 @property (nonatomic,assign) MHYoutubeVideoQuality youtubeVideoQuality;
 
+@property (nonatomic,strong) NSString* youtubeVideoId;
+@property (nonatomic,assign) BOOL youtubeVideoNotEmbeddable;
+
 + (MHGallerySharedManager *)sharedManager;
 /**
  *  You can create a Thumbnail from a Video, you can create it from Videos from a Webserver, Youtube and Vimeo
@@ -91,6 +94,8 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
 
 
 -(BOOL)isUIViewControllerBasedStatusBarAppearance;
+
+-(BOOL)manageYouTubeErrors;
 
 /**
  *  To get the absolute URL for Vimeo Videos. To change the Quality check vimeoVideoQuality
