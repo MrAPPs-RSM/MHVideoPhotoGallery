@@ -188,7 +188,7 @@
     
     NSDictionary *video = MHDictionaryForQueryString(videoData);
 	
-	if(video[@"errorcode"] && [video[@"errorcode"] isEqual:@"150"]){
+	if(video[@"allowed_ads"] || (video[@"errorcode"] && [video[@"errorcode"] isEqual:@"150"])){
 
 		self.youtubeVideoNotEmbeddable=YES;
 		[self manageYouTubeErrors];
