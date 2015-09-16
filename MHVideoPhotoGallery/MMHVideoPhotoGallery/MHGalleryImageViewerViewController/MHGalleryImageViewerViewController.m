@@ -322,7 +322,17 @@
     }else{
         MHImageViewController *imageViewController = (MHImageViewController*)self.pageViewController.viewControllers.firstObject;
         if (imageViewController.imageView.image != nil) {
-            UIActivityViewController *act = [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image] applicationActivities:nil];
+			
+			MHGalleryItem* item= self.galleryItems[self.pageIndex];
+			
+			UIActivityViewController *act;
+			
+			if(item.galleryType==MHGalleryTypeVideo){
+				act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image,item.URLString] applicationActivities:nil];
+			}else{
+				act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image] applicationActivities:nil];
+			}
+			
             [self presentViewController:act animated:YES completion:nil];
             
             if ([act respondsToSelector:@selector(popoverPresentationController)]) {
@@ -1342,6 +1352,10 @@
 
 -(void)playButtonPressed{
     if (!self.playingVideo) {
+		
+		if([MHGallerySharedManager.sharedManager manageYouTubeErrors]){
+			return;
+		}
         
         [self bringMoviePlayerToFront];
         
@@ -1353,6 +1367,9 @@
             [self.viewController changeToPauseButton];
             
         }else{
+			
+	
+			
             UIActivityIndicatorView *act = [UIActivityIndicatorView.alloc initWithFrame:self.view.bounds];
             act.tag = 304;
             [self.view addSubview:act];
