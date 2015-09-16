@@ -137,10 +137,33 @@
     return applicationLanguageIdentifier;
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+	
+	if(buttonIndex==1){
+		
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"youtube://%@",self.youtubeVideoId]]];
+		self.youtubeVideoId=nil;
+	}
+}
+
+-(BOOL)manageYouTubeErrors{
+	
+	if(self.youtubeVideoNotEmbeddable){
+		
+		UIAlertView* alertView=[[UIAlertView alloc] initWithTitle:@"Video Youtube" message:@"Visualizza il video su Youtube? " delegate:self cancelButtonTitle:@"Annulla" otherButtonTitles:@"Apri", nil];
+		
+		[alertView show];
+	}
+	
+	return self.youtubeVideoNotEmbeddable;
+}
+
 -(void)getYoutubeURLforMediaPlayer:(NSString*)URL
                       successBlock:(void (^)(NSURL *URL,NSError *error))succeedBlock{
     
-    NSString *videoID = [[URL componentsSeparatedByString:@"?v="] lastObject];
+	NSString *videoID = [[URL componentsSeparatedByString:@"?v="] lastObject];
+	self.youtubeVideoId=videoID;
+	
     NSURL *videoInfoURL = [NSURL URLWithString:[NSString stringWithFormat:MHYoutubePlayBaseURL, videoID ?: @"", [self languageIdentifier]]];
     NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] initWithURL:videoInfoURL
                                                                     cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -164,6 +187,15 @@
     NSString *videoData = [NSString.alloc initWithData:data encoding:NSASCIIStringEncoding];
     
     NSDictionary *video = MHDictionaryForQueryString(videoData);
+	
+	if(video[@"errorcode"] && [video[@"errorcode"] isEqual:@"150"]){
+
+		self.youtubeVideoNotEmbeddable=YES;
+		[self manageYouTubeErrors];
+		
+		return nil;
+	}
+	
     NSArray *videoURLS = [video[@"url_encoded_fmt_stream_map"] componentsSeparatedByString:@","];
     NSMutableDictionary *streamURLs = NSMutableDictionary.new;
     for (NSString *videoURL in videoURLS){
@@ -213,11 +245,7 @@
             succeedBlock(URL,error);
         }];
     }else{
-        if([[NSFileManager defaultManager] fileExistsAtPath:URLString]){
-            succeedBlock([NSURL fileURLWithPath:URLString], nil);
-        } else {
-            succeedBlock([NSURL URLWithString:URLString],nil);
-        }
+        succeedBlock([NSURL URLWithString:URLString],nil);
     }
     
     
