@@ -163,6 +163,7 @@
     
 	NSString *videoID = [[URL componentsSeparatedByString:@"?v="] lastObject];
 	self.youtubeVideoId=videoID;
+	self.youtubeVideoNotEmbeddable=NO;
 	
     NSURL *videoInfoURL = [NSURL URLWithString:[NSString stringWithFormat:MHYoutubePlayBaseURL, videoID ?: @"", [self languageIdentifier]]];
     NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] initWithURL:videoInfoURL
