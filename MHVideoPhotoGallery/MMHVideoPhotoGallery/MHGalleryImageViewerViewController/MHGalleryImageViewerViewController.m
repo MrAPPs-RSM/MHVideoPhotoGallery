@@ -1351,6 +1351,15 @@
 }
 
 -(void)playButtonPressed{
+    
+    if (self.item) {
+        if ([self.item.URLString containsString:@"youtube"]) {
+            NSURL *url = [NSURL URLWithString:self.item.URLString];
+            [[UIApplication sharedApplication] openURL:url];
+            return;
+        }
+    }
+    
     if (!self.playingVideo) {
 		
 		if([MHGallerySharedManager.sharedManager manageYouTubeErrors]){
