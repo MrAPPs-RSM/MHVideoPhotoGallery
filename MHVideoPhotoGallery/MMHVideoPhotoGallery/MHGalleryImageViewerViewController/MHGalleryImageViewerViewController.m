@@ -987,6 +987,13 @@
 }
 
 -(void)changePlayButtonToUnPlay{
+    if (self.item) {
+        if (self.item.URLString) {
+            if ([self.item.URLString containsString:@"youtube"]) {
+                return;
+            }
+        }
+    }
     [self.playButton setImage:MHGalleryImage(@"unplay")
                      forState:UIControlStateNormal];
 }
@@ -1353,10 +1360,12 @@
 -(void)playButtonPressed{
     
     if (self.item) {
-        if ([self.item.URLString containsString:@"youtube"]) {
-            NSURL *url = [NSURL URLWithString:self.item.URLString];
-            [[UIApplication sharedApplication] openURL:url];
-            return;
+        if (self.item.URLString) {
+            if ([self.item.URLString containsString:@"youtube"]) {
+                NSURL *url = [NSURL URLWithString:self.item.URLString];
+                [[UIApplication sharedApplication] openURL:url];
+                return;
+            }
         }
     }
     
