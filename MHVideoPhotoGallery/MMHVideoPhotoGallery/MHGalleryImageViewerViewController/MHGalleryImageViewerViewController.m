@@ -322,23 +322,23 @@
     }else{
         MHImageViewController *imageViewController = (MHImageViewController*)self.pageViewController.viewControllers.firstObject;
         if (imageViewController.imageView.image != nil) {
-			
-			MHGalleryItem* item= self.galleryItems[self.pageIndex];
-			
-			UIActivityViewController *act;
-			
-			if(item.galleryType==MHGalleryTypeVideo){
-				act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image,item.URLString] applicationActivities:nil];
-			}else{
-				act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image] applicationActivities:nil];
-			}
-			
+            
+            MHGalleryItem* item= self.galleryItems[self.pageIndex];
+            
+            UIActivityViewController *act;
+            
+            if(item.galleryType==MHGalleryTypeVideo){
+                act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image,item.URLString] applicationActivities:nil];
+            }else{
+                act= [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image] applicationActivities:nil];
+            }
+            
             [self presentViewController:act animated:YES completion:nil];
             
             if ([act respondsToSelector:@selector(popoverPresentationController)]) {
                 act.popoverPresentationController.barButtonItem = self.shareBarButton;
             }
-        }        
+        }
     }
 }
 
@@ -935,6 +935,14 @@
             
             self.scrollView.maximumZoomScale = 1;
             self.scrollView.minimumZoomScale =1;
+            
+            if (self.item) {
+                if (self.item.URLString) {
+                    if ([self.item.URLString containsString:@"youtube"]) {
+                        self.moviePlayerToolBarTop.hidden = true;
+                    }
+                }
+            }
         }
         
         self.imageView.userInteractionEnabled = YES;
@@ -1186,26 +1194,26 @@
 }
 
 - (void)loadStateDidChange:(NSNotification *)notification{
-	MPMoviePlayerController *player = notification.object;
-	MPMovieLoadState loadState = player.loadState;
-	if (loadState & MPMovieLoadStatePlayable){
+    MPMoviePlayerController *player = notification.object;
+    MPMovieLoadState loadState = player.loadState;
+    if (loadState & MPMovieLoadStatePlayable){
         if (!self.videoWasPlayable) {
             [self performSelectorOnMainThread:@selector(changeToPlayable)
                                    withObject:nil
                                 waitUntilDone:YES];
         }
         
-	}
+    }
     if (loadState & MPMovieLoadStatePlaythroughOK){
         self.videoDownloaded = YES;
-	}
-	
-	if (loadState & MPMovieLoadStateStalled){
+    }
+    
+    if (loadState & MPMovieLoadStateStalled){
         
         [self performSelectorOnMainThread:@selector(stopMovie)
                                withObject:nil
                             waitUntilDone:YES];
-	}
+    }
 }
 
 -(void)updateTimerLabels{
@@ -1370,10 +1378,10 @@
     }
     
     if (!self.playingVideo) {
-		
-		if([MHGallerySharedManager.sharedManager manageYouTubeErrors]){
-			return;
-		}
+        
+        if([MHGallerySharedManager.sharedManager manageYouTubeErrors]){
+            return;
+        }
         
         [self bringMoviePlayerToFront];
         
@@ -1385,9 +1393,9 @@
             [self.viewController changeToPauseButton];
             
         }else{
-			
-	
-			
+            
+    
+            
             UIActivityIndicatorView *act = [UIActivityIndicatorView.alloc initWithFrame:self.view.bounds];
             act.tag = 304;
             [self.view addSubview:act];
